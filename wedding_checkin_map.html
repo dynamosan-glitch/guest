@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width,initial-scale=1' />
+<title>婚宴查位｜Jack & Lily Wedding Reception</title>
+<style>
+  body { font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif; margin: 12px; background:#fff8fb; color:#2b2b2b; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  h2{margin:6px 0 10px; color:#b65f7a}
+  #search{width:100%; padding:12px; font-size:16px; box-sizing:border-box; border:2px solid #f2c2d1; border-radius:8px; background:linear-gradient(90deg,#fff,#fff8f0);}
+  #mapArea{position:relative; margin-top:12px; border:1px solid #fde3ef; overflow:hidden; background: #fff;}
+  #mapImg{display:block; width:100%; height:auto;}
+  .spot{ position:absolute; transform:translate(-50%,-50%); pointer-events:auto; cursor:pointer; text-align:center; user-select:none; }
+  .spot .dot{ width:44px; height:44px; border-radius:50%; border:3px solid rgba(182,95,122,0.35); background: linear-gradient(180deg,#fff,#ffeef4); display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(182,95,122,0.12); transition: all .18s ease; font-weight:700; color:#6b2237 }
+  .spot .label{ font-size:12px; margin-top:6px; color:#6b2237 }
+  .spot.highlight .dot{ transform:scale(1.35); box-shadow: 0 0 18px rgba(182,95,122,0.35); border-color: #ff8fb7; }
+  .infoBox{ margin-top:10px; padding:12px; background:linear-gradient(180deg,#fff,#fff7fb); border-radius:10px; border:1px solid #fde3ef; display:flex; gap:12px; align-items:center; }
+  .infoBox .title{ font-weight:800; color:#b65f7a; }
+  .noRes{ color:#777 }
+  @media(max-width:600px){ .spot .dot{width:40px;height:40px} }
+</style>
+</head>
+<body>
+<div class='wrap'>
+  <h2>婚宴報到查位（粉金浪漫版）</h2>
+  <input id='search' placeholder='輸入姓名或部分姓名，例如「王啟平」，系統會即時搜尋...' />
+  <div id='mapArea'>
+    <img id='mapImg' src='喜宴座位圖.jpg' alt='seat map'>
+  </div>
+  <div class='infoBox' id='infoBox'>
+    <div>
+      <div class='title' id='infoName'>尚未搜尋</div>
+      <div id='infoTable' style='color:#333'>請輸入姓名開始搜尋</div>
+    </div>
+    <div style='margin-left:auto'>
+      <div id='infoCount' style='font-weight:700'></div>
+    </div>
+  </div>
+  <p style='color:#666; font-size:13px; margin-top:8px'>
+    說明：若未找到結果，可嘗試輸入部分姓名；如需精準到單人椅位，請提供每位的椅位編號。
+  </p>
+</div>
+
+<script>
+const positions = [{"id": "主桌", "x": 360, "y": 80}, {"id": "貴賓A", "x": 220, "y": 120}, {"id": "貴賓B", "x": 500, "y": 120}, {"id": "01", "x": 100, "y": 180}, {"id": "02", "x": 180, "y": 180}, {"id": "03", "x": 260, "y": 180}, {"id": "04", "x": 440, "y": 180}, {"id": "05", "x": 520, "y": 180}, {"id": "06", "x": 600, "y": 180}, {"id": "07", "x": 100, "y": 260}, {"id": "08", "x": 180, "y": 260}, {"id": "09", "x": 260, "y": 260}, {"id": "10", "x": 440, "y": 260}, {"id": "11", "x": 520, "y": 260}, {"id": "12", "x": 600, "y": 260}, {"id": "13", "x": 100, "y": 340}, {"id": "14", "x": 180, "y": 340}, {"id": "15", "x": 260, "y": 340}, {"id": "16", "x": 440, "y": 340}, {"id": "17", "x": 520, "y": 340}, {"id": "18", "x": 600, "y": 340}, {"id": "19", "x": 100, "y": 420}, {"id": "20", "x": 180, "y": 420}, {"id": "21", "x": 260, "y": 420}, {"id": "22", "x": 440, "y": 420}, {"id": "23", "x": 520, "y": 420}, {"id": "24", "x": 600, "y": 420}, {"id": "25", "x": 100, "y": 500}, {"id": "26", "x": 180, "y": 500}, {"id": "27", "x": 260, "y": 500}, {"id": "28", "x": 440, "y": 500}, {"id": "29", "x": 520, "y": 500}, {"id": "30", "x": 600, "y": 500}, {"id": "31", "x": 100, "y": 580}, {"id": "32", "x": 180, "y": 580}, {"id": "33", "x": 260, "y": 580}, {"id": "34", "x": 440, "y": 580}, {"id": "35", "x": 520, "y": 580}, {"id": "36", "x": 600, "y": 580}, {"id": "37", "x": 100, "y": 660}, {"id": "38", "x": 180, "y": 660}, {"id": "39", "x": 260, "y": 660}, {"id": "40", "x": 440, "y": 660}, {"id": "41", "x": 520, "y": 660}, {"id": "42", "x": 600, "y": 660}, {"id": "43", "x": 100, "y": 740}, {"id": "44", "x": 180, "y": 740}, {"id": "45", "x": 260, "y": 740}, {"id": "46", "x": 440, "y": 740}, {"id": "47", "x": 520, "y": 740}, {"id": "48", "x": 600, "y": 740}, {"id": "49", "x": 100, "y": 820}, {"id": "50", "x": 180, "y": 820}, {"id": "51", "x": 260, "y": 820}, {"id": "52", "x": 440, "y": 820}, {"id": "53", "x": 520, "y": 820}, {"id": "54", "x": 600, "y": 820}];
+let guests = [];
+
+async function loadCSV(){
+  try{ const res = await fetch('wedding_guest_tables.csv'); const txt = await res.text(); const lines = txt.trim().split(/\r?\n/); lines.shift(); guests = lines.map(l=>{ const parts = l.split(','); return {table_no:parts[0], name:parts[1], count: parseInt(parts[2]||'1')||1}; }); }catch(e){ console.warn('無法讀取 wedding_guest_tables.csv', e); }
+}
+
+function createSpots(){
+  const wrap = document.getElementById('mapArea');
+  const img = document.getElementById('mapImg');
+  const baseW = 800;
+  positions.forEach(pos=>{
+    const el = document.createElement('div');
+    el.className='spot';
+    el.dataset.table = pos.id;
+    el.style.left = pos.x + 'px';
+    el.style.top  = pos.y + 'px';
+    el.innerHTML = `<div class='dot'>${pos.id}</div><div class='label'>${pos.id}</div>`;
+    el.title = pos.id;
+    el.addEventListener('click', function(){ highlightTable(pos.id); showInfoByTable(pos.id); });
+    wrap.appendChild(el);
+  });
+
+  function rescale(){
+    const curW = img.clientWidth;
+    const scale = curW / baseW;
+    document.querySelectorAll('.spot').forEach(function(s){ const t = s.dataset.table; const p = positions.find(x=>x.id==t); if(!p) return; s.style.left = (p.x * scale) + 'px'; s.style.top = (p.y * scale) + 'px'; });
+  }
+  window.addEventListener('resize', rescale);
+  img.addEventListener('load', rescale);
+  setTimeout(rescale,200);
+}
+
+function highlightTable(tableId){
+  document.querySelectorAll('.spot').forEach(s=> s.classList.remove('highlight'));
+  const el = document.querySelector('.spot[data-table="'+tableId+'"]');
+  if(el){ el.classList.add('highlight'); el.scrollIntoView({behavior:'smooth', block:'center'}); }
+}
+
+// *** 修改後的 showInfo 函式，包含兩項提示更新 ***
+function showInfo(tableId, foundName, count){
+  const infoName = document.getElementById('infoName');
+  const infoTable= document.getElementById('infoTable');
+  const infoCount= document.getElementById('infoCount');
+  
+  if(!foundName){ 
+    infoName.textContent = '找不到該姓名'; 
+    infoTable.textContent = '請聯繫新人的招待服務您'; // 找不到資料時的提示
+    infoCount.textContent = ''; 
+    return; 
+  }
+  
+  infoName.textContent = foundName; 
+  infoTable.textContent = `您在第 ${tableId} 桌`; // 找到資料時的提示
+  infoCount.textContent = `人數：${count}`;
+}
+// **********************************************
+
+function showInfoByTable(tableId){
+  const matches = guests.filter(g=> g.table_no == tableId);
+  if(matches.length>0){ const names = matches.map(m=>m.name).slice(0,4).join('、'); showInfo(tableId, names, matches.reduce((s,m)=>s+m.count,0)); }
+  else showInfo(tableId, null, 0);
+}
+
+function searchName(q){
+  if(!q) return null;
+  q = q.trim();
+  const r = guests.filter(g => g.name && g.name.includes(q));
+  return r;
+}
+
+document.getElementById('search').addEventListener('input', function(e){
+  const q = e.target.value.trim();
+  if(!q){ document.getElementById('infoName').textContent='尚未搜尋'; document.getElementById('infoTable').textContent='請輸入姓名開始搜尋'; document.getElementById('infoCount').textContent=''; document.querySelectorAll('.spot').forEach(s=> s.classList.remove('highlight')); return; }
+  const res = searchName(q);
+  if(!res || res.length===0){ showInfo('', null); return; }
+  const first = res[0];
+  highlightTable(first.table_no);
+  // 使用新的 showInfo 函式
+  showInfo(first.table_no, first.name, first.count); 
+  
+  // 由於 showInfo 已經設定了主要訊息，這裡將 '桌次：' 改為只顯示找到多筆的額外提示
+  if(res.length>1){ document.getElementById('infoTable').textContent += '（找到 ' + res.length + ' 筆相似結果）'; }
+});
+
+(async function init(){
+  await loadCSV();
+  createSpots();
+})();
+</script>
+</body>
+</html>

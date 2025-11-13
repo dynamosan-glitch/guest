@@ -1,0 +1,164 @@
+body {
+    font-family: '微軟正黑體', 'Arial', sans-serif;
+    background-color: #F8F8F8; /* 淺灰色背景 */
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 700px; /* 限制內容寬度 */
+    background: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+}
+
+/* 標題區塊 */
+.header h1 {
+    color: #C08080; /* 粉金色調 */
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+.header p {
+    color: #888;
+    margin-bottom: 25px;
+}
+
+/* 查詢輸入區塊 */
+.search-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+#guestName {
+    padding: 12px 15px;
+    width: 60%;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 1.1em;
+    transition: border-color 0.3s;
+}
+
+#guestName:focus {
+    border-color: #D4AF37; /* 金色高亮 */
+    outline: none;
+}
+
+button {
+    padding: 12px 25px;
+    background-color: #D4AF37; /* 主要按鈕顏色：金色 */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #C08080; /* 懸停效果：粉金色 */
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* 查詢結果區塊 */
+.result-box {
+    min-height: 120px;
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px dashed #E0E0E0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEF7F7; /* 淺粉色背景 */
+}
+
+.result-box.error {
+    background-color: #FFEDED; /* 錯誤提示更紅的背景 */
+    color: #D9534F;
+    border-color: #F0A8A8;
+}
+
+.guest-info {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.table-display {
+    font-size: 2.5em;
+    color: #C08080; /* 粉金色 */
+    font-weight: bold;
+    padding: 10px 20px;
+    border: 3px solid #D4AF37; /* 金色邊框 */
+    border-radius: 10px;
+    background-color: #FFFBEA; /* 淺金色背景 */
+}
+
+/* 座位圖區塊 */
+.seating-chart h2 {
+    color: #666;
+    margin-bottom: 15px;
+    border-top: 1px solid #EEE;
+    padding-top: 20px;
+}
+
+.image-wrapper {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#chartImage {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 座位高亮效果 */
+/* 這是模擬座位圖上的高亮效果，實際應用中，您需要為座位圖上的每個桌子加上一個帶有ID的覆蓋層（Overlay），
+   然後用JS來控制該Overlay的樣式。這裡僅作視覺提示。 */
+.highlight-table {
+    /* 這是給圖片添加的紅色邊框，作為「高亮」的替代演示 */
+    border: 5px solid #E05D5D; 
+    box-shadow: 0 0 20px rgba(224, 93, 93, 0.8);
+    animation: pulse 1.5s infinite alternate;
+}
+
+/* 脈衝動畫 */
+@keyframes pulse {
+    from {
+        box-shadow: 0 0 10px rgba(224, 93, 93, 0.5);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(224, 93, 93, 1);
+    }
+}
+
+/* 響應式設計 */
+@media (max-width: 600px) {
+    .search-box {
+        flex-direction: column;
+        gap: 15px;
+    }
+    #guestName, button {
+        width: 100%;
+    }
+    .header h1 {
+        font-size: 2em;
+    }
+}

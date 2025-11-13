@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>婚宴報到查位</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="guests_data.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>💍 婚宴報到查位</h1>
+            <p>請輸入您的**全名**查詢座位</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="guestName" placeholder="請輸入姓名 (例如: 陳大明)" onkeypress="handleKeyPress(event)">
+            <button onclick="searchGuest()">查詢座位</button>
+        </div>
+
+        <div id="resultBox" class="result-box">
+            </div>
+
+        <div class="seating-chart">
+            <h2>宴會廳座位示意圖</h2>
+            <div class="image-wrapper">
+                
+                <img id="chartImage" src="喜宴座位圖.jpg" alt="宴會廳座位圖">
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

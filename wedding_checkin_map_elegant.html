@@ -1,184 +1,436 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>婚宴報到查位（典雅粉金版）</title>
-<style>
-  body {
-    font-family: "Microsoft JhengHei","Noto Sans TC",sans-serif;
-    margin: 20px;
-    background: linear-gradient(180deg,#fffafc,#fff4f8);
-    color:#3b1f25;
-  }
-  .wrap { max-width:1000px; margin:0 auto; text-align:center; }
-  h2 { color:#b65f7a; margin-bottom:14px; }
-  #search {
-    width:100%; max-width:400px; padding:10px 14px;
-    font-size:16px; border:2px solid #f3c7d3; border-radius:10px;
-    background:linear-gradient(90deg,#fff,#fff7f9);
-    box-shadow:0 2px 6px rgba(182,95,122,0.1);
-  }
-  #mapArea {
-    display:grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 28px;
-    justify-items: center;
-    margin-top:30px;
-  }
-  .table {
-    width:70px; height:70px;
-    border-radius:50%;
-    background: radial-gradient(circle at 30% 30%, #fff7fb, #ffe0ec);
-    border:3px solid #e7b3c3;
-    box-shadow:0 4px 10px rgba(182,95,122,0.25);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition: all .2s ease;
-    position:relative;
-  }
-  .table.highlight {
-    transform: scale(1.3);
-    box-shadow:0 0 18px rgba(182,95,122,0.45);
-    border-color:#ff9ec0;
-    z-index:2;
-  }
-  .table-label {
-    margin-top:6px; font-weight:700; color:#6b2237;
-  }
-  .vip-row, .main-row {
-    display:flex; justify-content:center; align-items:center; gap:40px;
-    margin-top:14px;
-  }
-  .infoBox {
-    margin-top:24px;
-    padding:14px;
-    border-radius:12px;
-    background:linear-gradient(180deg,#fff,#fff6fa);
-    border:1px solid #f3c7d3;
-    display:inline-block;
-    min-width:260px;
-  }
-  .title { color:#b65f7a; font-weight:800; margin-bottom:6px; }
-  .noRes { color:#777; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【黃吳府】喜宴座位查詢</title>
+    <style>
+        /* CSS 樣式開始 - 美化與精準定位 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap'); /* 引入思源宋體，更優雅 */
+
+        :root {
+            --primary-color: #A03131; /* 深紅色/酒紅色 */
+            --secondary-color: #FFD700; /* 金色/喜慶色 */
+            --background-color: #fcfcfc;
+            --card-background: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Noto Serif TC', '微軟正黑體', 'Microsoft JhengHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 2.2em;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            margin-top: 5px;
+        }
+        .subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            background-color: var(--card-background);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 17px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #8b0000;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 50px;
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        .result-box.found {
+            background-color: #f7fff7;
+            border: 1px solid #c8e6c9;
+            color: #388e3c;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .result-box.not-found {
+            background-color: #fff7f7;
+            border: 1px solid #e6c8c8;
+            color: #d32f2f;
+            border-left: 5px solid #f44336;
+        }
+        .result-box p {
+            margin: 5px 0;
+        }
+        .result-box strong {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        .result-box .note {
+            font-size: 0.9em;
+            color: #777;
+            display: block;
+        }
+
+
+        /* 座位地圖容器 */
+        .seat-map-container {
+            position: relative;
+            width: 95%;
+            max-width: 800px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .seat-map-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+        }
+
+        /* 座位地標定位與高亮 */
+        .seat-marker {
+            position: absolute;
+            /* 基礎尺寸，調整後更接近圖上桌子大小 */
+            width: 4.5%; 
+            height: 4.5%;
+            background-color: transparent;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        /* 主桌和貴賓桌的精準定位 */
+        #主桌 {
+            width: 13%;
+            height: 25%;
+            border-radius: 5px;
+            left: 42%;
+            top: 14.5%;
+        }
+
+        /* 貴賓桌微調到更精準的中心位置 */
+        #貴賓A { left: 34.5%; top: 15.5%; width: 4.5%; height: 4.5%; border-radius: 50%; }
+        #貴賓B { left: 60.5%; top: 15.5%; width: 4.5%; height: 4.5%; border-radius: 50%; }
+
+        /* 數字桌號精準定位 - 根據圖片網格進行微調 */
+        /* 左側欄 (X軸) */
+        .col-28 { left: 28%; } 
+        .col-34 { left: 34%; }
+        .col-40 { left: 40%; }
+        /* 右側欄 (X軸) */
+        .col-56 { left: 56%; }
+        .col-62 { left: 62%; }
+        .col-68 { left: 68%; }
+
+        /* 行高 (Y軸) */
+        .row-28 { top: 27.5%; }
+        .row-36 { top: 35.5%; }
+        .row-44 { top: 43.5%; }
+        .row-51 { top: 51.5%; }
+        .row-59 { top: 59.5%; }
+        .row-67 { top: 67.5%; }
+        .row-75 { top: 75.5%; }
+        .row-83 { top: 83.5%; }
+        .row-91 { top: 91.5%; } /* 最後一排 */
+        
+        /* 結合 X/Y 軸定位所有桌子 */
+        /* R1 */ #01 { @extend .col-28, .row-28; } #02 { @extend .col-34, .row-28; } #03 { @extend .col-40, .row-28; }
+               #04 { @extend .col-56, .row-28; } #05 { @extend .col-62, .row-28; } #06 { @extend .col-68, .row-28; }
+        /* R2 */ #07 { @extend .col-28, .row-36; } #08 { @extend .col-34, .row-36; } #09 { @extend .col-40, .row-36; }
+               #10 { @extend .col-56, .row-36; } #11 { @extend .col-62, .row-36; } #12 { @extend .col-68, .row-36; }
+        /* R3 */ #13 { @extend .col-28, .row-44; } #14 { @extend .col-34, .row-44; } #15 { @extend .col-40, .row-44; }
+               #16 { @extend .col-56, .row-44; } #17 { @extend .col-62, .row-44; } #18 { @extend .col-68, .row-44; }
+        /* R4 */ #19 { @extend .col-28, .row-51; } #20 { @extend .col-34, .row-51; } #21 { @extend .col-40, .row-51; }
+               #22 { @extend .col-56, .row-51; } #23 { @extend .col-62, .row-51; } #24 { @extend .col-68, .row-51; }
+        /* R5 */ #25 { @extend .col-28, .row-59; } #26 { @extend .col-34, .row-59; } #27 { @extend .col-40, .row-59; }
+               #28 { @extend .col-56, .row-59; } #29 { @extend .col-62, .row-59; } #30 { @extend .col-68, .row-59; }
+        /* R6 */ #31 { @extend .col-28, .row-67; } #32 { @extend .col-34, .row-67; } #33 { @extend .col-40, .row-67; }
+               #34 { @extend .col-56, .row-67; } #35 { @extend .col-62, .row-67; } #36 { @extend .col-68, .row-67; }
+        /* R7 */ #37 { @extend .col-28, .row-75; } #38 { @extend .col-34, .row-75; } #39 { @extend .col-40, .row-75; }
+               #40 { @extend .col-56, .row-75; } #41 { @extend .col-62, .row-75; } #42 { @extend .col-68, .row-75; }
+        /* R8 */ #43 { @extend .col-28, .row-83; } #44 { @extend .col-34, .row-83; } #45 { @extend .col-40, .row-83; }
+               #46 { @extend .col-56, .row-83; } #47 { @extend .col-62, .row-83; } #48 { @extend .col-68, .row-83; }
+        /* R9 */ #49 { @extend .col-28, .row-91; } #50 { @extend .col-34, .row-91; } #51 { @extend .col-40, .row-91; }
+               #52 { @extend .col-56, .row-91; } #53 { @extend .col-62, .row-91; } #54 { @extend .col-68, .row-91; }
+
+
+        /* 高亮樣式 */
+        .highlight {
+            background-color: rgba(255, 215, 0, 0.7) !important; /* 金黃色高亮 */
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            animation: pulse 1.2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
+        }
+
+        /* 響應式設計：小屏幕調整 */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .search-container { padding: 15px; }
+            .input-group { flex-direction: column; gap: 5px; }
+            button { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <h2>婚宴報到查位（典雅粉金版）</h2>
-  <input id="search" placeholder="輸入姓名或部分姓名，例如「王啟平」..." />
-  
-  <!-- 主桌與貴賓桌 -->
-  <div class="main-row">
-    <div class="table" data-table="貴賓A"><div>貴賓A</div></div>
-    <div class="table" data-table="主桌"><div>主桌</div></div>
-    <div class="table" data-table="貴賓B"><div>貴賓B</div></div>
-  </div>
 
-  <!-- 一般桌次 -->
-  <div id="mapArea"></div>
+    <h1>🏮 歡迎蒞臨喜宴 🏮</h1>
+    <div class="subtitle">請輸入您的姓名查詢座位</div>
 
-  <div class="infoBox">
-    <div class="title" id="infoName">尚未搜尋</div>
-    <div id="infoTable">請輸入姓名開始搜尋</div>
-    <div id="infoCount" style="margin-top:4px;"></div>
-  </div>
-  
-  <p style="color:#666;font-size:13px;margin-top:8px;">
-    若未找到結果，可嘗試輸入部分姓名；如仍查無，請洽新人招待協助。
-  </p>
-</div>
+    <div class="search-container">
+        <div class="input-group">
+            <input type="text" id="guestNameInput" placeholder="請輸入姓名" onkeyup="checkSearch(event)">
+            <button onclick="searchGuest()">查詢</button>
+        </div>
+        
+        <div class="result-box" id="resultBox">
+            </div>
+    </div>
 
-<script>
-let guests = [];
+    <div class="seat-map-container">
+        <img class="seat-map-image" src="喜宴座位圖.jpg" alt="宴會廳座位圖">
 
-async function loadCSV(){
-  try {
-    const res = await fetch('wedding_guest_tables.csv');
-    const txt = await res.text();
-    const lines = txt.trim().split(/\r?\n/);
-    lines.shift();
-    guests = lines.map(l=>{
-      const parts = l.split(',');
-      return { table_no: parts[0], name: parts[1], count: parseInt(parts[2]||'1')||1 };
-    });
-  } catch(e){
-    console.warn('無法讀取 CSV', e);
-  }
-}
+        <div id="主桌" class="seat-marker"></div>
+        <div id="貴賓A" class="seat-marker"></div>
+        <div id="貴賓B" class="seat-marker"></div>
 
-function createTables(){
-  const map = document.getElementById('mapArea');
-  for(let i=1; i<=54; i++){
-    const id = String(i).padStart(2,'0');
-    const div = document.createElement('div');
-    div.className = 'table';
-    div.dataset.table = id;
-    div.innerHTML = `<div>${id}</div>`;
-    div.addEventListener('click', ()=>{ highlightTable(id); showInfoByTable(id); });
-    map.appendChild(div);
-  }
-}
+        <div id="01" class="seat-marker col-28 row-28"></div> <div id="04" class="seat-marker col-56 row-28"></div>
+        <div id="02" class="seat-marker col-34 row-28"></div> <div id="05" class="seat-marker col-62 row-28"></div>
+        <div id="03" class="seat-marker col-40 row-28"></div> <div id="06" class="seat-marker col-68 row-28"></div>
+        <div id="07" class="seat-marker col-28 row-36"></div> <div id="10" class="seat-marker col-56 row-36"></div>
+        <div id="08" class="seat-marker col-34 row-36"></div> <div id="11" class="seat-marker col-62 row-36"></div>
+        <div id="09" class="seat-marker col-40 row-36"></div> <div id="12" class="seat-marker col-68 row-36"></div>
+        <div id="13" class="seat-marker col-28 row-44"></div> <div id="16" class="seat-marker col-56 row-44"></div>
+        <div id="14" class="seat-marker col-34 row-44"></div> <div id="17" class="seat-marker col-62 row-44"></div>
+        <div id="15" class="seat-marker col-40 row-44"></div> <div id="18" class="seat-marker col-68 row-44"></div>
+        <div id="19" class="seat-marker col-28 row-51"></div> <div id="22" class="seat-marker col-56 row-51"></div>
+        <div id="20" class="seat-marker col-34 row-51"></div> <div id="23" class="seat-marker col-62 row-51"></div>
+        <div id="21" class="seat-marker col-40 row-51"></div> <div id="24" class="seat-marker col-68 row-51"></div>
+        <div id="25" class="seat-marker col-28 row-59"></div> <div id="28" class="seat-marker col-56 row-59"></div>
+        <div id="26" class="seat-marker col-34 row-59"></div> <div id="29" class="seat-marker col-62 row-59"></div>
+        <div id="27" class="seat-marker col-40 row-59"></div> <div id="30" class="seat-marker col-68 row-59"></div>
+        <div id="31" class="seat-marker col-28 row-67"></div> <div id="34" class="seat-marker col-56 row-67"></div>
+        <div id="32" class="seat-marker col-34 row-67"></div> <div id="35" class="seat-marker col-62 row-67"></div>
+        <div id="33" class="seat-marker col-40 row-67"></div> <div id="36" class="seat-marker col-68 row-67"></div>
+        <div id="37" class="seat-marker col-28 row-75"></div> <div id="40" class="seat-marker col-56 row-75"></div>
+        <div id="38" class="seat-marker col-34 row-75"></div> <div id="41" class="seat-marker col-62 row-75"></div>
+        <div id="39" class="seat-marker col-40 row-75"></div> <div id="42" class="seat-marker col-68 row-75"></div>
+        <div id="43" class="seat-marker col-28 row-83"></div> <div id="46" class="seat-marker col-56 row-83"></div>
+        <div id="44" class="seat-marker col-34 row-83"></div> <div id="47" class="seat-marker col-62 row-83"></div>
+        <div id="45" class="seat-marker col-40 row-83"></div> <div id="48" class="seat-marker col-68 row-83"></div>
+        <div id="49" class="seat-marker col-28 row-91"></div> <div id="52" class="seat-marker col-56 row-91"></div>
+        <div id="50" class="seat-marker col-34 row-91"></div> <div id="53" class="seat-marker col-62 row-91"></div>
+        <div id="51" class="seat-marker col-40 row-91"></div> <div id="54" class="seat-marker col-68 row-91"></div>
+    </div>
 
-function highlightTable(id){
-  document.querySelectorAll('.table').forEach(t=>t.classList.remove('highlight'));
-  const el = document.querySelector(`.table[data-table="${id}"]`);
-  if(el){ el.classList.add('highlight'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
-}
+    <script>
+        /* JavaScript 程式碼開始 */
 
-function showInfo(tableId, foundName, count){
-  const infoName = document.getElementById('infoName');
-  const infoTable= document.getElementById('infoTable');
-  const infoCount= document.getElementById('infoCount');
-  if(!foundName){
-    alert("查無此姓名，請洽新人招待協助。");
-    infoName.textContent = '查無結果';
-    infoTable.textContent = '';
-    infoCount.textContent = '';
-    return;
-  }
-  infoName.textContent = foundName;
-  infoTable.textContent = `桌次：${tableId}`;
-  infoCount.textContent = `人數：${count}`;
-}
-
-function showInfoByTable(tableId){
-  const matches = guests.filter(g=> g.table_no == tableId);
-  if(matches.length>0){
-    const names = matches.map(m=>m.name).slice(0,4).join('、');
-    showInfo(tableId, names, matches.reduce((s,m)=>s+m.count,0));
-  } else {
-    showInfo(tableId, null, 0);
-  }
-}
-
-function searchName(q){
-  if(!q) return null;
-  q = q.trim();
-  const r = guests.filter(g => g.name && g.name.includes(q));
-  return r;
-}
-
-document.getElementById('search').addEventListener('input', function(e){
-  const q = e.target.value.trim();
-  if(!q){
-    document.getElementById('infoName').textContent='尚未搜尋';
-    document.getElementById('infoTable').textContent='請輸入姓名開始搜尋';
-    document.getElementById('infoCount').textContent='';
-    document.querySelectorAll('.table').forEach(s=> s.classList.remove('highlight'));
-    return;
-  }
-  const res = searchName(q);
-  if(!res || res.length===0){ showInfo('', null); return; }
-  const first = res[0];
-  highlightTable(first.table_no);
-  showInfo(first.table_no, first.name, first.count);
-  if(res.length>1){ document.getElementById('infoTable').textContent += `（找到 ${res.length} 筆相似結果）`; }
-});
-
-(async function init(){
-  await loadCSV();
-  createTables();
-})();
-</script>
-</body>
-</html>
+        // 1. 賓客資料庫 (從您的 wedding_guest_tables.csv 轉換而來)
+        // 為了避免重複的代碼區塊，我將資料陣列省略，請確保您使用上一個回覆中完整的 guestData 陣列
+        // [IMPORTANT: PASTE THE ENTIRE guestData ARRAY HERE]
+        const guestData = [
+            // 主桌
+            { name: "闕清祥", table: "主桌", count: "2" , note: ""},
+            { name: "吳炎松", table: "主桌", count: "1" , note: ""},
+            { name: "王啟平", table: "主桌", count: "1" , note: ""},
+            { name: "謝秀珍", table: "主桌", count: "1" , note: ""},
+            { name: "黃明傳", table: "主桌", count: "1" , note: ""},
+            { name: "謝振華", table: "主桌", count: "2" , note: ""},
+            { name: "闕秀玲", table: "主桌", count: "1" , note: ""},
+            { name: "吳炎宗", table: "主桌", count: "1" , note: ""},
+            { name: "黃信修", table: "主桌", count: "1" , note: ""},
+            { name: "吳欣穎", table: "主桌", count: "1" , note: ""},
+            // 貴賓A
+            { name: "顏志發", table: "貴賓A", count: "1" , note: "總統府資政"},
+            { name: "邱同印", table: "貴賓A", count: "1" , note: "前最高法院審判長"},
+            { name: "徐俊生", table: "貴賓A", count: "1" , note: "汐止分局長"},
+            { name: "羅億田", table: "貴賓A", count: "2" , note: "汐止六大隊大隊長 賢伉儷"},
+            { name: "李樹枝", table: "貴賓A", count: "1" , note: "國際獅子會300A2區前總監"},
+            { name: "黃朝慶", table: "貴賓A", count: "1" , note: "國際獅子會300A2區前總監"},
+            { name: "張利榮", table: "貴賓A", count: "1" , note: "鴻碩集團董事長"},
+            { name: "張茂楠", table: "貴賓A", count: "1" , note: "民主進步黨黨部主委"},
+            { name: "陳振雄", table: "貴賓A", count: "1" , note: "金弘笙實業有限公司董事長"},
+            { name: "卓豐閔", table: "貴賓A", count: "1" , note: "車麗屋汽車百貨總經理"},
+            { name: "林王賢", table: "貴賓A", count: "1" , note: "源豐行有限公司董事長"},
+            // 貴賓B
+            { name: "李 㼈", table: "貴賓B", count: "1" , note: "資深藝人"},
+            { name: "蔡鉦松", table: "貴賓B", count: "1" , note: "普賢藥華藥大股東"},
+            { name: "李世昌", table: "貴賓B", count: "2" , note: "清水巖主委"},
+            { name: "陳輝林", table: "貴賓B", count: "1" , note: "社后老人關懷協會前理事長"},
+            { name: "李育誠", table: "貴賓B", count: "1" , note: "崇德整骨大師"},
+            { name: "周金鴻", table: "貴賓B", count: "2" , note: "三總公共室主任 賢伉儷"},
+            { name: "林霈淳", table: "貴賓B", count: "1" , note: "澳邁國際執行長"},
+            { name: "劉凌偉", table: "貴賓B", count: "1" , note: "立普思股份有限公司董事長"},
+            { name: "黃吉星", table: "貴賓B", count: "2" , note: "好友 賢伉儷"},
+            // 桌次 01-54
+            { name: "吳國華", table: "01", count: "4" , note: ""},
+            { name: "吳代瑞", table: "01", count: "3" , note: ""},
+            { name: "吳雅玲", table: "01", count: "3" , note: ""},
+            { name: "謝秀惠", table: "02", count: "4" , note: ""},
+            { name: "謝佳諭", table: "02", count: "5" , note: ""},
+            { name: "吳蕙君", table: "03", count: "3" , note: "2大1小(兒童椅)"},
+            { name: "吳昇倫", table: "03", count: "1" , note: ""},
+            { name: "吳思樺", table: "03", count: "1" , note: ""},
+            { name: "王紹慈", table: "03", count: "1" , note: ""},
+            { name: "謝鎮宇", table: "03", count: "1" , note: ""},
+            { name: "謝青翰", table: "03", count: "1" , note: ""},
+            { name: "吳懿庭", table: "03", count: "2" , note: "1大1小(兒童椅)"},
+            { name: "王順吉", table: "04", count: "2" , note: ""},
+            { name: "黃添丁", table: "04", count: "3" , note: ""},
+            { name: "楊成觀", table: "04", count: "3" , note: ""},
+            { name: "王正傳", table: "04", count: "2" , note: ""},
+            { name: "林振文", table: "05", count: "2" , note: ""},
+            { name: "杜信光", table: "05", count: "5" , note: ""},
+            { name: "闕秀雀", table: "05", count: "2" , note: ""},
+            { name: "闕李麟", table: "05", count: "1" , note: ""},
+            { name: "高石龍", table: "06", count: "1" , note: ""},
+            { name: "黃建成", table: "06", count: "1" , note: ""},
+            { name: "黃彩雲", table: "06", count: "1" , note: ""},
+            { name: "黃松茂", table: "06", count: "1" , note: ""},
+            { name: "黃素月", table: "06", count: "2" , note: ""},
+            { name: "黃專凱", table: "06", count: "1" , note: ""},
+            { name: "紗拉", table: "06", count: "1" , note: ""},
+            { name: "陳承龍", table: "06", count: "1" , note: ""},
+            { name: "陳潘君枝", table: "06", count: "1" , note: ""},
+            { name: "呂寶貴", table: "06", count: "1" , note: "素食"},
+            { name: "林育陞", table: "07", count: "3" , note: ""},
+            { name: "吳紘緯", table: "07", count: "2" , note: ""},
+            { name: "吳明雄", table: "07", count: "2" , note: ""},
+            { name: "吳明鴻", table: "07", count: "1" , note: ""},
+            { name: "林庸善", table: "07", count: "1" , note: ""},
+            { name: "劉鎮平", table: "07", count: "2" , note: ""},
+            { name: "許春美", table: "08", count: "1" , note: ""},
+            { name: "吳龍泉", table: "08", count: "1" , note: ""},
+            { name: "吳宇軒", table: "08", count: "1" , note: ""},
+            { name: "廖富美", table: "08", count: "1" , note: ""},
+            { name: "吳鎮宏", table: "08", count: "1" , note: ""},
+            { name: "吳家伶", table: "08", count: "2" , note: ""},
+            { name: "廖勝彬", table: "08", count: "2" , note: ""},
+            { name: "吳炎輝", table: "08", count: "1" , note: ""},
+            { name: "吳炎輝", table: "08", count: "1" , note: "素食"},
+            { name: "馥羽", table: "09", count: "2" , note: ""},
+            { name: "李凱盛", table: "09", count: "2" , note: ""},
+            { name: "蘇聖芳", table: "09", count: "1" , note: ""},
+            { name: "張玉琳", table: "09", count: "2" , note: ""},
+            { name: "心平", table: "09", count: "2" , note: ""},
+            { name: "芮萍", table: "09", count: "2" , note: ""},
+            { name: "李 㼈 太太", table: "10", count: "2" , note: ""},
+            { name: "張萬寶", table: "10", count: "3" , note: ""},
+            { name: "卓豐閔太太", table: "10", count: "1" , note: ""},
+            { name: "陳輝林太太", table: "10", count: "1" , note: ""},
+            { name: "張采茹", table: "10", count: "3" , note: ""},
+            { name: "林昌榮", table: "11", count: "1" , note: ""},
+            { name: "林振聲", table: "11", count: "2" , note: ""},
+            { name: "陳茂堂", table: "11", count: "1" , note: ""},
+            { name: "林德興", table: "11", count: "2" , note: ""},
+            { name: "陳玫蓁", table: "11", count: "1" , note: ""},
+            { name: "張忠玲", table: "11", count: "2" , note: ""},
+            { name: "余瑞玉", table: "11", count: "1" , note: ""},
+            { name: "黃來福", table: "12", count: "2" , note: ""},
+            { name: "黃來興", table: "12", count: "2" , note: ""},
+            { name: "黃銘義", table: "12", count: "2" , note: ""},
+            { name: "翁震翔", table: "12", count: "2" , note: ""},
+            { name: "謝昆金", table: "12", count: "2" , note: ""},
+            { name: "洪煜喨", table: "12", count: "1" , note: "素食"},
+            { name: "林青璇", table: "13", count: "2" , note: ""},
+            { name: "蔡羽溱", table: "13", count: "2" , note: ""},
+            { name: "林玉惠", table: "13", count: "1" , note: ""},
+            { name: "游弼涵", table: "13", count: "1" , note: "素食"},
+            { name: "游弼涵", table: "13", count: "2" , note: "1大1小(兒童坐大人椅)"},
+            { name: "董其欣", table: "13", count: "3" , note: "2大1小(兒童椅)"},
+            { name: "林念樺", table: "13", count: "1" , note: ""},
+            { name: "楊啟明", table: "14", count: "2" , note: ""},
+            { name: "林正弘", table: "14", count: "2" , note: ""},
+            { name: "黃盈國", table: "14", count: "2" , note: ""},
+            { name: "薛定吉", table: "14", count: "2" , note: ""},
+            { name: "高志榮", table: "14", count: "2" , note: ""},
+            { name: "廖瑞民", table: "15", count: "3" , note: ""},
+            { name: "陳振仲", table: "15", count: "2" , note: ""},
+            { name: "黃連興", table: "15", count: "2" , note: ""},
+            { name: "張世飛", table: "15", count: "1" , note: ""},
+            { name: "江嘉倫", table: "15", count: "1" , note: ""},
+            { name: "張政立", table: "15", count: "1" , note: ""},
+            { name: "黃俊強", table: "16", count: "1" , note: ""},
+            { name: "哈滴", table: "16", count: "2" , note: ""},
+            { name: "韓國黃先生", table: "16", count: "2" , note: ""},
+            { name: "鄭閔中", table: "16", count: "1" , note: ""},
+            { name: "黃永全", table: "16", count: "1" , note: ""},
+            { name: "朱紹文", table: "16", count: "2" , note: ""},
+            { name: "黃裕堡", table: "16", count: "1" , note: ""},
+            { name: "王啟平", table: "17", count: "3" , note: ""},
+            { name: "黃駿崴", table: "17", count: "2" , note: ""},
+            { name: "林佳德", table: "17", count: "5" , note: ""},
+            { name: "陳榮豐", table: "17", count: "1" , note: "素食"},
+            { name: "周川琪", table: "18", count: "3" , note: ""},
+            { name: "林三貴", table: "18", count: "3" , note: ""},
+            { name: "曾志豪", table: "18", count: "2" , note: ""},
+            { name: "蔡智民", table: "18", count: "2" , note: ""},
+            { name: "張永達", table: "19", count: "2" , note: ""},
+            { name: "
